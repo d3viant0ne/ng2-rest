@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/index.ts"],"names":[],"mappings":"AAAA,cAAc,eAAe,CAAC","sourcesContent":["export * from './rest.module';\n\n// all components that will be codegen'd need to be exported for AOT to work\n// export * from './helloWorld.component';\n\ninterface DecoratorInvocation {\n  type: Function;\n  args?: any[];\n}\n"]}
