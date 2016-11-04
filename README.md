@@ -1,7 +1,8 @@
 # ng2-http-wrapper
 <!-- [![Build Status](https://travis-ci.org/hboylan/ng2-rest.svg?branch=master)](https://travis-ci.org/hboylan/ng2-rest) -->
 [![npm version](https://badge.fury.io/js/ng2-rest.svg)](http://badge.fury.io/js/ng2-rest)
-<!-- [![devDependency Status](https://david-dm.org/hboylan/ng2-rest/dev-status.svg)](https://david-dm.org/hboylan/ng2-rest#info=devDependencies) -->
+[![devDependency Status](https://david-dm.org/hboylan/ng2-rest/dev-status.svg)](https://david-dm.org/hboylan/ng2-rest?type=dev)
+[![peerDependency Status](https://david-dm.org/hboylan/ng2-rest/peer-status.svg)](https://david-dm.org/hboylan/ng2-rest?type=peer)
 [![GitHub issues](https://img.shields.io/github/issues/hboylan/ng2-rest.svg)](https://github.com/hboylan/ng2-rest/issues)
 [![GitHub stars](https://img.shields.io/github/stars/hboylan/ng2-rest.svg)](https://github.com/hboylan/ng2-rest/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hboylan/ng2-rest/master/LICENSE)
