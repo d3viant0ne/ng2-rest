@@ -1,6 +1,6 @@
 {
   "name": "ng2-http-wrapper",
-  "version": "0.0.3-alpha",
+  "version": "0.0.4-alpha",
   "description": "Angular2 HTTP wrapper for REST client services",
   "main": "./dist/umd/ng2-http-wrapper.js",
   "module": "./dist/esm/src/index.js",
@@ -15,6 +15,7 @@
     "test": "karma start",
     "test:watch": "karma start --watch",
     "commit": "git-cz",
+    "push": "git add -A && npm run commit && git push origin master",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "typedoc": "typedoc --options typedoc.json --out docs src/*.ts",
     "gh-pages": "git checkout gh-pages && git merge master && npm run build:demo && npm run typedoc && git add . && git commit -m 'chore(docs): build demo and docs' && git push && git checkout master",
