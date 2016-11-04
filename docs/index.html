@@ -92,7 +92,7 @@
 				<pre><code class="lang-typescript"><span class="hljs-comment">// demo.module.ts</span>
 <span class="hljs-keyword">import</span> {NgModule} from <span class="hljs-string">'@angular/core'</span>;
 <span class="hljs-keyword">import</span> {BrowserModule} from <span class="hljs-string">'@angular/platform-browser'</span>;
-<span class="hljs-keyword">import</span> {RESTModule} from <span class="hljs-string">'../src'</span>;
+<span class="hljs-keyword">import</span> {RESTModule} from <span class="hljs-string">'ng2-http-wrapper'</span>;
 <span class="hljs-keyword">import</span> {Demo} from <span class="hljs-string">'./demo.component'</span>;
 <span class="hljs-keyword">import</span> {DemoService} from <span class="hljs-string">'./demo.service'</span>;
 
@@ -107,7 +107,7 @@
 				<pre><code class="lang-typescript"><span class="hljs-comment">// demo.service.ts</span>
 <span class="hljs-keyword">import</span> {Injectable} from <span class="hljs-string">'@angular/core'</span>;
 <span class="hljs-keyword">import</span> {Http, Request, Response} from <span class="hljs-string">'@angular/http'</span>;
-<span class="hljs-keyword">import</span> {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces, MediaType} from <span class="hljs-string">'../src/rest.service'</span>;
+<span class="hljs-keyword">import</span> {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces} from <span class="hljs-string">'ng2-http-wrapper'</span>;
 <span class="hljs-keyword">import</span> {Observable} from <span class="hljs-string">'rxjs/Observable'</span>;
 
 @Injectable()
@@ -149,6 +149,9 @@
 }
 </code></pre>
 				<pre><code class="lang-typescript"><span class="hljs-comment">// demo.component.ts</span>
+<span class="hljs-keyword">import</span> {Component, Input} from <span class="hljs-string">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> {DemoService, Post} from <span class="hljs-string">'./demo.service'</span>;
+
 @Component(...)
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Demo {
   @Input() <span class="hljs-keyword">public</span> demoPost: Post = <span class="hljs-keyword">new</span> Post(<span class="hljs-number">1</span>, <span class="hljs-string">'Demo Title'</span>, <span class="hljs-string">'Demo Body'</span>);
