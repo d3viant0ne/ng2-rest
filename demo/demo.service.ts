@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Observable';
 // https://github.com/typicode/jsonplaceholder#how-to
 
 @Injectable()
-@BaseUrl('http://jsonplaceholder.typicode.com')
+@BaseUrl('https://jsonplaceholder.typicode.com')
 @DefaultHeaders({
   'Accept': 'application/json',
   'Content-Type': 'application/json'

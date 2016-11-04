@@ -56,7 +56,7 @@ import {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces, M
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()
-@BaseUrl('http://jsonplaceholder.typicode.com')
+@BaseUrl('https://jsonplaceholder.typicode.com')
 @DefaultHeaders({
   'Accept': 'application/json',
   'Content-Type': 'application/json'
