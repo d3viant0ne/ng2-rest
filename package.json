@@ -1,6 +1,6 @@
 {
   "name": "ng2-http-wrapper",
-  "version": "0.0.1-alpha",
+  "version": "0.0.2-alpha",
   "description": "Angular2 HTTP wrapper for REST client services",
   "main": "./dist/umd/ng2-http-wrapper.js",
   "module": "./dist/esm/src/index.js",

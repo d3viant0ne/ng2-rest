@@ -59,7 +59,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
 	__export(__webpack_require__(1));
-	__export(__webpack_require__(20));
+	// export * from './rest.service';
 	// all components that will be codegen'd need to be exported for AOT to work
 	// export * from './helloWorld.component';
 
@@ -78,9 +78,260 @@ return /******/ (function(modules) { // webpackBootstrap
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
+	var __param = (this && this.__param) || function (paramIndex, decorator) {
+	    return function (target, key) { decorator(target, key, paramIndex); }
+	};
 	var core_1 = __webpack_require__(2);
+	// import {HttpModule} from '@angular/http';
+	// import {RESTClient} from './rest.service';
 	var http_1 = __webpack_require__(3);
-	var rest_service_1 = __webpack_require__(20);
+	var core_2 = __webpack_require__(2);
+	__webpack_require__(20);
+	/**
+	* Angular 2 RESTClient class.
+	*
+	* @class RESTClient
+	* @constructor
+	*/
+	var RESTClient = (function () {
+	    function RESTClient(http) {
+	        this.http = http;
+	    }
+	    RESTClient.prototype.getBaseUrl = function () {
+	        return null;
+	    };
+	    ;
+	    RESTClient.prototype.getDefaultHeaders = function () {
+	        return null;
+	    };
+	    ;
+	    /**
+	    * Request Interceptor
+	    *
+	    * @method requestInterceptor
+	    * @param {Request} req - request object
+	    */
+	    RESTClient.prototype.requestInterceptor = function (req) {
+	        //
+	    };
+	    /**
+	    * Response Interceptor
+	    *
+	    * @method responseInterceptor
+	    * @param {Response} res - response object
+	    * @returns {Response} res - transformed response object
+	    */
+	    RESTClient.prototype.responseInterceptor = function (res) {
+	        return res;
+	    };
+	    RESTClient = __decorate([
+	        core_2.Injectable(),
+	        __param(0, core_2.Inject(http_1.Http)), 
+	        __metadata('design:paramtypes', [http_1.Http])
+	    ], RESTClient);
+	    return RESTClient;
+	}());
+	exports.RESTClient = RESTClient;
+	/**
+	 * Set the base URL of REST resource
+	 * @param {String} url - base URL
+	 */
+	function BaseUrl(url) {
+	    return function (Target) {
+	        Target.prototype.getBaseUrl = function () {
+	            return url;
+	        };
+	        return Target;
+	    };
+	}
+	exports.BaseUrl = BaseUrl;
+	/**
+	 * Set default headers for every method of the RESTClient
+	 * @param {Object} headers - deafult headers in a key-value pair
+	 */
+	function DefaultHeaders(headers) {
+	    return function (Target) {
+	        Target.prototype.getDefaultHeaders = function () {
+	            return headers;
+	        };
+	        return Target;
+	    };
+	}
+	exports.DefaultHeaders = DefaultHeaders;
+	function paramBuilder(paramName) {
+	    return function (key) {
+	        return function (target, propertyKey, parameterIndex) {
+	            var metadataKey = propertyKey + "_" + paramName + "_parameters";
+	            var paramObj = {
+	                key: key,
+	                parameterIndex: parameterIndex
+	            };
+	            if (Array.isArray(target[metadataKey])) {
+	                target[metadataKey].push(paramObj);
+	            }
+	            else {
+	                target[metadataKey] = [paramObj];
+	            }
+	        };
+	    };
+	}
+	/**
+	 * Path variable of a method's url, type: string
+	 * @param {string} key - path key to bind value
+	 */
+	exports.Path = paramBuilder('Path');
+	/**
+	 * Query value of a method's url, type: string
+	 * @param {string} key - query key to bind value
+	 */
+	exports.Query = paramBuilder('Query');
+	/**
+	 * Body of a REST method, type: key-value pair object
+	 * Only one body per method!
+	 */
+	exports.Body = paramBuilder('Body')('Body');
+	/**
+	 * Custom header of a REST method, type: string
+	 * @param {string} key - header key to bind value
+	 */
+	exports.Header = paramBuilder('Header');
+	/**
+	 * Set custom headers for a REST method
+	 * @param {Object} headersDef - custom headers in a key-value pair
+	 */
+	function Headers(headersDef) {
+	    return function (target, propertyKey, descriptor) {
+	        descriptor.headers = headersDef;
+	        return descriptor;
+	    };
+	}
+	exports.Headers = Headers;
+	/**
+	 * Defines the media type(s) that the methods can produce
+	 * @param MediaType producesDef - mediaType to be parsed
+	 */
+	function Produces(producer) {
+	    return function (target, propertyKey, descriptor) {
+	        descriptor.producer = producer;
+	        return descriptor;
+	    };
+	}
+	exports.Produces = Produces;
+	/**
+	 * Supported @Produces media types
+	 */
+	(function (MediaType) {
+	    MediaType[MediaType["JSON"] = 0] = "JSON";
+	})(exports.MediaType || (exports.MediaType = {}));
+	var MediaType = exports.MediaType;
+	function methodBuilder(method) {
+	    return function (url) {
+	        return function (target, propertyKey, descriptor) {
+	            var pPath = target[(propertyKey + "_Path_parameters")];
+	            var pQuery = target[(propertyKey + "_Query_parameters")];
+	            var pBody = target[(propertyKey + "_Body_parameters")];
+	            var pHeader = target[(propertyKey + "_Header_parameters")];
+	            descriptor.value = function () {
+	                var args = [];
+	                for (var _i = 0; _i < arguments.length; _i++) {
+	                    args[_i - 0] = arguments[_i];
+	                }
+	                // Body
+	                var body = null;
+	                if (pBody) {
+	                    body = JSON.stringify(args[pBody[0].parameterIndex]);
+	                }
+	                // Path
+	                var resUrl = url;
+	                if (pPath) {
+	                    for (var k in pPath) {
+	                        if (pPath.hasOwnProperty(k)) {
+	                            resUrl = resUrl.replace('{' + pPath[k].key + '}', args[pPath[k].parameterIndex]);
+	                        }
+	                    }
+	                }
+	                // Query
+	                var search = new http_1.URLSearchParams();
+	                if (pQuery) {
+	                    pQuery
+	                        .filter(function (p) { return args[p.parameterIndex]; }) // filter out optional parameters
+	                        .forEach(function (p) {
+	                        var key = p.key;
+	                        var value = args[p.parameterIndex];
+	                        // if the value is a instance of Object, we stringify it
+	                        if (value instanceof Object) {
+	                            value = JSON.stringify(value);
+	                        }
+	                        search.set(encodeURIComponent(key), encodeURIComponent(value));
+	                    });
+	                }
+	                // Headers
+	                // set class default headers
+	                var headers = new http_1.Headers(this.getDefaultHeaders());
+	                // set method specific headers
+	                for (var k in descriptor.headers) {
+	                    if (descriptor.headers.hasOwnProperty(k)) {
+	                        headers.append(k, descriptor.headers[k]);
+	                    }
+	                }
+	                // set parameter specific headers
+	                if (pHeader) {
+	                    for (var k in pHeader) {
+	                        if (pHeader.hasOwnProperty(k)) {
+	                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+	                        }
+	                    }
+	                }
+	                // Request options
+	                var options = new http_1.RequestOptions({
+	                    method: method,
+	                    url: this.getBaseUrl() + resUrl,
+	                    headers: headers,
+	                    body: body,
+	                    search: search
+	                });
+	                var req = new http_1.Request(options);
+	                // intercept the request
+	                this.requestInterceptor(req);
+	                // make the request and store the observable for later transformation
+	                var observable = this.http.request(req);
+	                // intercept the response
+	                observable = this.responseInterceptor(observable);
+	                // transform the obserable in accordance to the @Produces decorator
+	                if (descriptor.producer) {
+	                    observable = observable.map(descriptor.producer);
+	                }
+	                return observable;
+	            };
+	            return descriptor;
+	        };
+	    };
+	}
+	/**
+	 * GET method
+	 * @param {string} url - resource url of the method
+	 */
+	exports.GET = methodBuilder(http_1.RequestMethod.Get);
+	/**
+	 * POST method
+	 * @param {string} url - resource url of the method
+	 */
+	exports.POST = methodBuilder(http_1.RequestMethod.Post);
+	/**
+	 * PUT method
+	 * @param {string} url - resource url of the method
+	 */
+	exports.PUT = methodBuilder(http_1.RequestMethod.Put);
+	/**
+	 * DELETE method
+	 * @param {string} url - resource url of the method
+	 */
+	exports.DELETE = methodBuilder(http_1.RequestMethod.Delete);
+	/**
+	 * HEAD method
+	 * @param {string} url - resource url of the method
+	 */
+	exports.HEAD = methodBuilder(http_1.RequestMethod.Head);
 	var RESTModule = (function () {
 	    function RESTModule() {
 	    }
@@ -89,7 +340,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            declarations: [],
 	            imports: [http_1.HttpModule],
 	            exports: [http_1.HttpModule],
-	            providers: [rest_service_1.RESTClient]
+	            providers: [RESTClient]
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], RESTModule);
@@ -2716,7 +2967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
-	 * @license Angular v2.0.2
+	 * @license Angular v2.1.2
 	 * (c) 2010-2016 Google, Inc. https://angular.io/
 	 * License: MIT
 	 */
@@ -2777,19 +3028,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // TODO: to be fixed properly via #2830, noop for now
 	    };
 	    function isPresent(obj) {
-	        return obj !== undefined && obj !== null;
+	        return obj != null;
 	    }
 	    function isBlank(obj) {
-	        return obj === undefined || obj === null;
-	    }
-	    function isNumber(obj) {
-	        return typeof obj === 'number';
-	    }
-	    function isString(obj) {
-	        return typeof obj === 'string';
-	    }
-	    function isArray(obj) {
-	        return Array.isArray(obj);
+	        return obj == null;
 	    }
 	    function stringify(token) {
 	        if (typeof token === 'string') {
@@ -2808,126 +3050,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var newLineIndex = res.indexOf('\n');
 	        return newLineIndex === -1 ? res : res.substring(0, newLineIndex);
 	    }
-	    var StringWrapper = (function () {
-	        function StringWrapper() {
-	        }
-	        StringWrapper.fromCharCode = function (code) { return String.fromCharCode(code); };
-	        StringWrapper.charCodeAt = function (s, index) { return s.charCodeAt(index); };
-	        StringWrapper.split = function (s, regExp) { return s.split(regExp); };
-	        StringWrapper.equals = function (s, s2) { return s === s2; };
-	        StringWrapper.stripLeft = function (s, charVal) {
-	            if (s && s.length) {
-	                var pos = 0;
-	                for (var i = 0; i < s.length; i++) {
-	                    if (s[i] != charVal)
-	                        break;
-	                    pos++;
-	                }
-	                s = s.substring(pos);
-	            }
-	            return s;
-	        };
-	        StringWrapper.stripRight = function (s, charVal) {
-	            if (s && s.length) {
-	                var pos = s.length;
-	                for (var i = s.length - 1; i >= 0; i--) {
-	                    if (s[i] != charVal)
-	                        break;
-	                    pos--;
-	                }
-	                s = s.substring(0, pos);
-	            }
-	            return s;
-	        };
-	        StringWrapper.replace = function (s, from, replace) {
-	            return s.replace(from, replace);
-	        };
-	        StringWrapper.replaceAll = function (s, from, replace) {
-	            return s.replace(from, replace);
-	        };
-	        StringWrapper.slice = function (s, from, to) {
-	            if (from === void 0) { from = 0; }
-	            if (to === void 0) { to = null; }
-	            return s.slice(from, to === null ? undefined : to);
-	        };
-	        StringWrapper.replaceAllMapped = function (s, from, cb) {
-	            return s.replace(from, function () {
-	                var matches = [];
-	                for (var _i = 0; _i < arguments.length; _i++) {
-	                    matches[_i - 0] = arguments[_i];
-	                }
-	                // Remove offset & string from the result array
-	                matches.splice(-2, 2);
-	                // The callback receives match, p1, ..., pn
-	                return cb(matches);
-	            });
-	        };
-	        StringWrapper.contains = function (s, substr) { return s.indexOf(substr) != -1; };
-	        StringWrapper.compare = function (a, b) {
-	            if (a < b) {
-	                return -1;
-	            }
-	            else if (a > b) {
-	                return 1;
-	            }
-	            else {
-	                return 0;
-	            }
-	        };
-	        return StringWrapper;
-	    }());
-	    var NumberWrapper = (function () {
-	        function NumberWrapper() {
-	        }
-	        NumberWrapper.toFixed = function (n, fractionDigits) { return n.toFixed(fractionDigits); };
-	        NumberWrapper.equal = function (a, b) { return a === b; };
-	        NumberWrapper.parseIntAutoRadix = function (text) {
-	            var result = parseInt(text);
-	            if (isNaN(result)) {
-	                throw new Error('Invalid integer literal when parsing ' + text);
-	            }
-	            return result;
-	        };
-	        NumberWrapper.parseInt = function (text, radix) {
-	            if (radix == 10) {
-	                if (/^(\-|\+)?[0-9]+$/.test(text)) {
-	                    return parseInt(text, radix);
-	                }
-	            }
-	            else if (radix == 16) {
-	                if (/^(\-|\+)?[0-9ABCDEFabcdef]+$/.test(text)) {
-	                    return parseInt(text, radix);
-	                }
-	            }
-	            else {
-	                var result = parseInt(text, radix);
-	                if (!isNaN(result)) {
-	                    return result;
-	                }
-	            }
-	            throw new Error('Invalid integer literal when parsing ' + text + ' in base ' + radix);
-	        };
-	        Object.defineProperty(NumberWrapper, "NaN", {
-	            get: function () { return NaN; },
-	            enumerable: true,
-	            configurable: true
-	        });
-	        NumberWrapper.isNumeric = function (value) { return !isNaN(value - parseFloat(value)); };
-	        NumberWrapper.isNaN = function (value) { return isNaN(value); };
-	        NumberWrapper.isInteger = function (value) { return Number.isInteger(value); };
-	        return NumberWrapper;
-	    }());
-	    // Can't be all uppercase as our transpiler would think it is a special directive...
-	    var Json = (function () {
-	        function Json() {
-	        }
-	        Json.parse = function (s) { return global$1.JSON.parse(s); };
-	        Json.stringify = function (data) {
-	            // Dart doesn't take 3 arguments
-	            return global$1.JSON.stringify(data, null, 2);
-	        };
-	        return Json;
-	    }());
 	    function setValueOnPath(global, path, value) {
 	        var parts = path.split('.');
 	        var obj = global;
@@ -2946,13 +3068,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	        obj[parts.shift()] = value;
 	    }
 	
+	    /**
+	     * @license
+	     * Copyright Google Inc. All Rights Reserved.
+	     *
+	     * Use of this source code is governed by an MIT-style license that can be
+	     * found in the LICENSE file at https://angular.io/license
+	     */
 	    var CAMEL_CASE_REGEXP = /([A-Z])/g;
 	    var DASH_CASE_REGEXP = /-([a-z])/g;
 	    function camelCaseToDashCase(input) {
-	        return StringWrapper.replaceAllMapped(input, CAMEL_CASE_REGEXP, function (m) { return '-' + m[1].toLowerCase(); });
+	        return input.replace(CAMEL_CASE_REGEXP, function () {
+	            var m = [];
+	            for (var _i = 0; _i < arguments.length; _i++) {
+	                m[_i - 0] = arguments[_i];
+	            }
+	            return '-' + m[1].toLowerCase();
+	        });
 	    }
 	    function dashCaseToCamelCase(input) {
-	        return StringWrapper.replaceAllMapped(input, DASH_CASE_REGEXP, function (m) { return m[1].toUpperCase(); });
+	        return input.replace(DASH_CASE_REGEXP, function () {
+	            var m = [];
+	            for (var _i = 0; _i < arguments.length; _i++) {
+	                m[_i - 0] = arguments[_i];
+	            }
+	            return m[1].toUpperCase();
+	        });
 	    }
 	
 	    /**
@@ -3144,7 +3285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function _resolveStyleUnit(val, userProvidedProp, formattedProp) {
 	        var unit = '';
 	        if (_isPixelDimensionStyle(formattedProp) && val != 0 && val != '0') {
-	            if (isNumber(val)) {
+	            if (typeof val === 'number') {
 	                unit = 'px';
 	            }
 	            else if (_findDimensionalSuffix(val.toString()).length == 0) {
@@ -3158,7 +3299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _$PERIOD = 46;
 	    function _findDimensionalSuffix(value) {
 	        for (var i = 0; i < value.length; i++) {
-	            var c = StringWrapper.charCodeAt(value, i);
+	            var c = value.charCodeAt(i);
 	            if ((c >= _$0 && c <= _$9) || c == _$PERIOD)
 	                continue;
 	            return value.substring(i, value.length);
@@ -3767,22 +3908,86 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return BrowserPlatformLocation;
 	    }(_angular_common.PlatformLocation));
 	
-	    var _clearValues = (function () {
-	        if ((new Map()).keys().next) {
-	            return function _clearValues(m) {
-	                var keyIterator = m.keys();
-	                var k;
-	                while (!((k = keyIterator.next()).done)) {
-	                    m.set(k.value, null);
+	    var BrowserGetTestability = (function () {
+	        function BrowserGetTestability() {
+	        }
+	        BrowserGetTestability.init = function () { _angular_core.setTestabilityGetter(new BrowserGetTestability()); };
+	        BrowserGetTestability.prototype.addToWindow = function (registry) {
+	            global$1.getAngularTestability = function (elem, findInAncestors) {
+	                if (findInAncestors === void 0) { findInAncestors = true; }
+	                var testability = registry.findTestabilityInTree(elem, findInAncestors);
+	                if (testability == null) {
+	                    throw new Error('Could not find testability for element.');
 	                }
+	                return testability;
 	            };
-	        }
-	        else {
-	            return function _clearValuesWithForeEach(m) {
-	                m.forEach(function (v, k) { m.set(k, null); });
+	            global$1.getAllAngularTestabilities = function () { return registry.getAllTestabilities(); };
+	            global$1.getAllAngularRootElements = function () { return registry.getAllRootElements(); };
+	            var whenAllStable = function (callback /** TODO #9100 */) {
+	                var testabilities = global$1.getAllAngularTestabilities();
+	                var count = testabilities.length;
+	                var didWork = false;
+	                var decrement = function (didWork_ /** TODO #9100 */) {
+	                    didWork = didWork || didWork_;
+	                    count--;
+	                    if (count == 0) {
+	                        callback(didWork);
+	                    }
+	                };
+	                testabilities.forEach(function (testability /** TODO #9100 */) {
+	                    testability.whenStable(decrement);
+	                });
 	            };
+	            if (!global$1['frameworkStabilizers']) {
+	                global$1['frameworkStabilizers'] = [];
+	            }
+	            global$1['frameworkStabilizers'].push(whenAllStable);
+	        };
+	        BrowserGetTestability.prototype.findTestabilityInTree = function (registry, elem, findInAncestors) {
+	            if (elem == null) {
+	                return null;
+	            }
+	            var t = registry.getTestability(elem);
+	            if (isPresent(t)) {
+	                return t;
+	            }
+	            else if (!findInAncestors) {
+	                return null;
+	            }
+	            if (getDOM().isShadowRoot(elem)) {
+	                return this.findTestabilityInTree(registry, getDOM().getHost(elem), true);
+	            }
+	            return this.findTestabilityInTree(registry, getDOM().parentElement(elem), true);
+	        };
+	        return BrowserGetTestability;
+	    }());
+	
+	    /**
+	     * A service that can be used to get and set the title of a current HTML document.
+	     *
+	     * Since an Angular 2 application can't be bootstrapped on the entire HTML document (`<html>` tag)
+	     * it is not possible to bind to the `text` property of the `HTMLTitleElement` elements
+	     * (representing the `<title>` tag). Instead, this service can be used to set and get the current
+	     * title value.
+	     *
+	     * @experimental
+	     */
+	    var Title = (function () {
+	        function Title() {
 	        }
-	    })();
+	        /**
+	         * Get the title of the current HTML document.
+	         * @returns {string}
+	         */
+	        Title.prototype.getTitle = function () { return getDOM().getTitle(); };
+	        /**
+	         * Set the title of the current HTML document.
+	         * @param newTitle
+	         */
+	        Title.prototype.setTitle = function (newTitle) { getDOM().setTitle(newTitle); };
+	        return Title;
+	    }());
+	
 	    // Safari doesn't implement MapIterator.next(), which is used is Traceur's polyfill of Array.from
 	    // TODO(mlaval): remove the work around once we have a working polyfill of Array.from
 	    var _arrayFromMap = (function () {
@@ -3841,42 +4046,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var ListWrapper = (function () {
 	        function ListWrapper() {
 	        }
-	        // JS has no way to express a statically fixed size list, but dart does so we
-	        // keep both methods.
-	        ListWrapper.createFixedSize = function (size) { return new Array(size); };
-	        ListWrapper.createGrowableSize = function (size) { return new Array(size); };
-	        ListWrapper.clone = function (array) { return array.slice(0); };
-	        ListWrapper.forEachWithIndex = function (array, fn) {
-	            for (var i = 0; i < array.length; i++) {
-	                fn(array[i], i);
-	            }
-	        };
-	        ListWrapper.first = function (array) {
-	            if (!array)
-	                return null;
-	            return array[0];
-	        };
-	        ListWrapper.last = function (array) {
-	            if (!array || array.length == 0)
-	                return null;
-	            return array[array.length - 1];
-	        };
-	        ListWrapper.indexOf = function (array, value, startIndex) {
-	            if (startIndex === void 0) { startIndex = 0; }
-	            return array.indexOf(value, startIndex);
-	        };
-	        ListWrapper.contains = function (list, el) { return list.indexOf(el) !== -1; };
-	        ListWrapper.reversed = function (array) {
-	            var a = ListWrapper.clone(array);
-	            return a.reverse();
-	        };
-	        ListWrapper.concat = function (a, b) { return a.concat(b); };
-	        ListWrapper.insert = function (list, index, value) { list.splice(index, 0, value); };
-	        ListWrapper.removeAt = function (list, index) {
-	            var res = list[index];
-	            list.splice(index, 1);
-	            return res;
-	        };
 	        ListWrapper.removeAll = function (list, items) {
 	            for (var i = 0; i < items.length; ++i) {
 	                var index = list.indexOf(items[i]);
@@ -3891,13 +4060,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            return false;
 	        };
-	        ListWrapper.clear = function (list) { list.length = 0; };
-	        ListWrapper.isEmpty = function (list) { return list.length == 0; };
-	        ListWrapper.fill = function (list, value, start, end) {
-	            if (start === void 0) { start = 0; }
-	            if (end === void 0) { end = null; }
-	            list.fill(value, start, end === null ? list.length : end);
-	        };
 	        ListWrapper.equals = function (a, b) {
 	            if (a.length != b.length)
 	                return false;
@@ -3907,22 +4069,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            return true;
 	        };
-	        ListWrapper.slice = function (l, from, to) {
-	            if (from === void 0) { from = 0; }
-	            if (to === void 0) { to = null; }
-	            return l.slice(from, to === null ? undefined : to);
-	        };
-	        ListWrapper.splice = function (l, from, length) { return l.splice(from, length); };
-	        ListWrapper.sort = function (l, compareFn) {
-	            if (isPresent(compareFn)) {
-	                l.sort(compareFn);
-	            }
-	            else {
-	                l.sort();
-	            }
-	        };
-	        ListWrapper.toString = function (l) { return l.toString(); };
-	        ListWrapper.toJSON = function (l) { return JSON.stringify(l); };
 	        ListWrapper.maximum = function (list, predicate) {
 	            if (list.length == 0) {
 	                return null;
@@ -3931,7 +4077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var maxValue = -Infinity;
 	            for (var index = 0; index < list.length; index++) {
 	                var candidate = list[index];
-	                if (isBlank(candidate)) {
+	                if (candidate == null) {
 	                    continue;
 	                }
 	                var candidateValue = predicate(candidate);
@@ -3947,18 +4093,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _flattenArray(list, target);
 	            return target;
 	        };
-	        ListWrapper.addAll = function (list, source) {
-	            for (var i = 0; i < source.length; i++) {
-	                list.push(source[i]);
-	            }
-	        };
 	        return ListWrapper;
 	    }());
 	    function _flattenArray(source, target) {
 	        if (isPresent(source)) {
 	            for (var i = 0; i < source.length; i++) {
 	                var item = source[i];
-	                if (isArray(item)) {
+	                if (Array.isArray(item)) {
 	                    _flattenArray(item, target);
 	                }
 	                else {
@@ -3968,86 +4109,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        return target;
 	    }
-	
-	    var BrowserGetTestability = (function () {
-	        function BrowserGetTestability() {
-	        }
-	        BrowserGetTestability.init = function () { _angular_core.setTestabilityGetter(new BrowserGetTestability()); };
-	        BrowserGetTestability.prototype.addToWindow = function (registry) {
-	            global$1.getAngularTestability = function (elem, findInAncestors) {
-	                if (findInAncestors === void 0) { findInAncestors = true; }
-	                var testability = registry.findTestabilityInTree(elem, findInAncestors);
-	                if (testability == null) {
-	                    throw new Error('Could not find testability for element.');
-	                }
-	                return testability;
-	            };
-	            global$1.getAllAngularTestabilities = function () { return registry.getAllTestabilities(); };
-	            global$1.getAllAngularRootElements = function () { return registry.getAllRootElements(); };
-	            var whenAllStable = function (callback /** TODO #9100 */) {
-	                var testabilities = global$1.getAllAngularTestabilities();
-	                var count = testabilities.length;
-	                var didWork = false;
-	                var decrement = function (didWork_ /** TODO #9100 */) {
-	                    didWork = didWork || didWork_;
-	                    count--;
-	                    if (count == 0) {
-	                        callback(didWork);
-	                    }
-	                };
-	                testabilities.forEach(function (testability /** TODO #9100 */) {
-	                    testability.whenStable(decrement);
-	                });
-	            };
-	            if (!global$1['frameworkStabilizers']) {
-	                global$1['frameworkStabilizers'] = ListWrapper.createGrowableSize(0);
-	            }
-	            global$1['frameworkStabilizers'].push(whenAllStable);
-	        };
-	        BrowserGetTestability.prototype.findTestabilityInTree = function (registry, elem, findInAncestors) {
-	            if (elem == null) {
-	                return null;
-	            }
-	            var t = registry.getTestability(elem);
-	            if (isPresent(t)) {
-	                return t;
-	            }
-	            else if (!findInAncestors) {
-	                return null;
-	            }
-	            if (getDOM().isShadowRoot(elem)) {
-	                return this.findTestabilityInTree(registry, getDOM().getHost(elem), true);
-	            }
-	            return this.findTestabilityInTree(registry, getDOM().parentElement(elem), true);
-	        };
-	        return BrowserGetTestability;
-	    }());
-	
-	    /**
-	     * A service that can be used to get and set the title of a current HTML document.
-	     *
-	     * Since an Angular 2 application can't be bootstrapped on the entire HTML document (`<html>` tag)
-	     * it is not possible to bind to the `text` property of the `HTMLTitleElement` elements
-	     * (representing the `<title>` tag). Instead, this service can be used to set and get the current
-	     * title value.
-	     *
-	     * @experimental
-	     */
-	    var Title = (function () {
-	        function Title() {
-	        }
-	        /**
-	         * Get the title of the current HTML document.
-	         * @returns {string}
-	         */
-	        Title.prototype.getTitle = function () { return getDOM().getTitle(); };
-	        /**
-	         * Set the title of the current HTML document.
-	         * @param newTitle
-	         */
-	        Title.prototype.setTitle = function (newTitle) { getDOM().setTitle(newTitle); };
-	        return Title;
-	    }());
 	
 	    /**
 	     * A DI Token representing the main rendering context. In a browser this is the DOM Document.
@@ -4264,7 +4325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        DomRenderer.prototype.selectRootElement = function (selectorOrNode, debugInfo) {
 	            var el;
-	            if (isString(selectorOrNode)) {
+	            if (typeof selectorOrNode === 'string') {
 	                el = getDOM().querySelector(this._rootRenderer.document, selectorOrNode);
 	                if (isBlank(el)) {
 	                    throw new Error("The selector \"" + selectorOrNode + "\" did not match any elements");
@@ -4372,11 +4433,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        DomRenderer.prototype.setBindingDebugInfo = function (renderElement, propertyName, propertyValue) {
 	            var dashCasedPropertyName = camelCaseToDashCase(propertyName);
 	            if (getDOM().isCommentNode(renderElement)) {
-	                var existingBindings = StringWrapper.replaceAll(getDOM().getText(renderElement), /\n/g, '')
-	                    .match(TEMPLATE_BINDINGS_EXP);
-	                var parsedBindings = Json.parse(existingBindings[1]);
+	                var existingBindings = getDOM().getText(renderElement).replace(/\n/g, '').match(TEMPLATE_BINDINGS_EXP);
+	                var parsedBindings = JSON.parse(existingBindings[1]);
 	                parsedBindings[dashCasedPropertyName] = propertyValue;
-	                getDOM().setText(renderElement, StringWrapper.replace(TEMPLATE_COMMENT_TEXT, '{}', Json.stringify(parsedBindings)));
+	                getDOM().setText(renderElement, TEMPLATE_COMMENT_TEXT.replace('{}', JSON.stringify(parsedBindings, null, 2)));
 	            }
 	            else {
 	                this.setElementAttribute(renderElement, propertyName, propertyValue);
@@ -4442,19 +4502,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var HOST_ATTR = "_nghost-" + COMPONENT_VARIABLE;
 	    var CONTENT_ATTR = "_ngcontent-" + COMPONENT_VARIABLE;
 	    function _shimContentAttribute(componentShortId) {
-	        return StringWrapper.replaceAll(CONTENT_ATTR, COMPONENT_REGEX, componentShortId);
+	        return CONTENT_ATTR.replace(COMPONENT_REGEX, componentShortId);
 	    }
 	    function _shimHostAttribute(componentShortId) {
-	        return StringWrapper.replaceAll(HOST_ATTR, COMPONENT_REGEX, componentShortId);
+	        return HOST_ATTR.replace(COMPONENT_REGEX, componentShortId);
 	    }
 	    function _flattenStyles(compId, styles, target) {
 	        for (var i = 0; i < styles.length; i++) {
 	            var style = styles[i];
-	            if (isArray(style)) {
+	            if (Array.isArray(style)) {
 	                _flattenStyles(compId, style, target);
 	            }
 	            else {
-	                style = StringWrapper.replaceAll(style, COMPONENT_REGEX, compId);
+	                style = style.replace(COMPONENT_REGEX, compId);
 	                target.push(style);
 	            }
 	        }
@@ -4742,15 +4802,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        KeyEventsPlugin.parseEventName = function (eventName) {
 	            var parts = eventName.toLowerCase().split('.');
 	            var domEventName = parts.shift();
-	            if ((parts.length === 0) ||
-	                !(StringWrapper.equals(domEventName, 'keydown') ||
-	                    StringWrapper.equals(domEventName, 'keyup'))) {
+	            if ((parts.length === 0) || !(domEventName === 'keydown' || domEventName === 'keyup')) {
 	                return null;
 	            }
 	            var key = KeyEventsPlugin._normalizeKey(parts.pop());
 	            var fullKey = '';
 	            modifierKeys.forEach(function (modifierName) {
-	                if (ListWrapper.contains(parts, modifierName)) {
+	                if (parts.indexOf(modifierName) > -1) {
 	                    ListWrapper.remove(parts, modifierName);
 	                    fullKey += modifierName + '.';
 	                }
@@ -4769,10 +4827,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var fullKey = '';
 	            var key = getDOM().getEventKey(event);
 	            key = key.toLowerCase();
-	            if (StringWrapper.equals(key, ' ')) {
+	            if (key === ' ') {
 	                key = 'space'; // for readability
 	            }
-	            else if (StringWrapper.equals(key, '.')) {
+	            else if (key === '.') {
 	                key = 'dot'; // because '.' is used as a separator in event names
 	            }
 	            modifierKeys.forEach(function (modifierName) {
@@ -4788,7 +4846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	        KeyEventsPlugin.eventCallback = function (element, fullKey, handler, zone) {
 	            return function (event /** TODO #9100 */) {
-	                if (StringWrapper.equals(KeyEventsPlugin.getEventFullKey(event), fullKey)) {
+	                if (KeyEventsPlugin.getEventFullKey(event) === fullKey) {
 	                    zone.runGuarded(function () { return handler(event); });
 	                }
 	            };
@@ -5477,7 +5535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * ```
 	         */
 	        AngularProfiler.prototype.timeChangeDetection = function (config) {
-	            var record = isPresent(config) && config['record'];
+	            var record = config && config['record'];
 	            var profileName = 'Change Detection';
 	            // Profiler is not available in Android browsers, nor in IE 9 without dev tools opened
 	            var isProfilerAvailable = isPresent(win.console.profile);
@@ -5500,7 +5558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            var msPerTick = (end - start) / numTicks;
 	            win.console.log("ran " + numTicks + " change detection cycles");
-	            win.console.log(NumberWrapper.toFixed(msPerTick, 2) + " ms per check");
+	            win.console.log(msPerTick.toFixed(2) + " ms per check");
 	            return new ChangeDetectionPerfRecord(msPerTick, numTicks);
 	        };
 	        return AngularProfiler;
@@ -5627,280 +5685,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var __param = (this && this.__param) || function (paramIndex, decorator) {
-	    return function (target, key) { decorator(target, key, paramIndex); }
-	};
-	var http_1 = __webpack_require__(3);
-	var core_1 = __webpack_require__(2);
-	__webpack_require__(21);
-	/**
-	* Angular 2 RESTClient class.
-	*
-	* @class RESTClient
-	* @constructor
-	*/
-	var RESTClient = (function () {
-	    function RESTClient(http) {
-	        this.http = http;
-	    }
-	    RESTClient.prototype.getBaseUrl = function () {
-	        return null;
-	    };
-	    ;
-	    RESTClient.prototype.getDefaultHeaders = function () {
-	        return null;
-	    };
-	    ;
-	    /**
-	    * Request Interceptor
-	    *
-	    * @method requestInterceptor
-	    * @param {Request} req - request object
-	    */
-	    RESTClient.prototype.requestInterceptor = function (req) {
-	        //
-	    };
-	    /**
-	    * Response Interceptor
-	    *
-	    * @method responseInterceptor
-	    * @param {Response} res - response object
-	    * @returns {Response} res - transformed response object
-	    */
-	    RESTClient.prototype.responseInterceptor = function (res) {
-	        return res;
-	    };
-	    RESTClient = __decorate([
-	        core_1.Injectable(),
-	        __param(0, core_1.Inject(http_1.Http)), 
-	        __metadata('design:paramtypes', [http_1.Http])
-	    ], RESTClient);
-	    return RESTClient;
-	}());
-	exports.RESTClient = RESTClient;
-	/**
-	 * Set the base URL of REST resource
-	 * @param {String} url - base URL
-	 */
-	function BaseUrl(url) {
-	    return function (Target) {
-	        Target.prototype.getBaseUrl = function () {
-	            return url;
-	        };
-	        return Target;
-	    };
-	}
-	exports.BaseUrl = BaseUrl;
-	/**
-	 * Set default headers for every method of the RESTClient
-	 * @param {Object} headers - deafult headers in a key-value pair
-	 */
-	function DefaultHeaders(headers) {
-	    return function (Target) {
-	        Target.prototype.getDefaultHeaders = function () {
-	            return headers;
-	        };
-	        return Target;
-	    };
-	}
-	exports.DefaultHeaders = DefaultHeaders;
-	function paramBuilder(paramName) {
-	    return function (key) {
-	        return function (target, propertyKey, parameterIndex) {
-	            var metadataKey = propertyKey + "_" + paramName + "_parameters";
-	            var paramObj = {
-	                key: key,
-	                parameterIndex: parameterIndex
-	            };
-	            if (Array.isArray(target[metadataKey])) {
-	                target[metadataKey].push(paramObj);
-	            }
-	            else {
-	                target[metadataKey] = [paramObj];
-	            }
-	        };
-	    };
-	}
-	/**
-	 * Path variable of a method's url, type: string
-	 * @param {string} key - path key to bind value
-	 */
-	exports.Path = paramBuilder('Path');
-	/**
-	 * Query value of a method's url, type: string
-	 * @param {string} key - query key to bind value
-	 */
-	exports.Query = paramBuilder('Query');
-	/**
-	 * Body of a REST method, type: key-value pair object
-	 * Only one body per method!
-	 */
-	exports.Body = paramBuilder('Body')('Body');
-	/**
-	 * Custom header of a REST method, type: string
-	 * @param {string} key - header key to bind value
-	 */
-	exports.Header = paramBuilder('Header');
-	/**
-	 * Set custom headers for a REST method
-	 * @param {Object} headersDef - custom headers in a key-value pair
-	 */
-	function Headers(headersDef) {
-	    return function (target, propertyKey, descriptor) {
-	        descriptor.headers = headersDef;
-	        return descriptor;
-	    };
-	}
-	exports.Headers = Headers;
-	/**
-	 * Defines the media type(s) that the methods can produce
-	 * @param MediaType producesDef - mediaType to be parsed
-	 */
-	function Produces(producer) {
-	    return function (target, propertyKey, descriptor) {
-	        descriptor.producer = producer;
-	        return descriptor;
-	    };
-	}
-	exports.Produces = Produces;
-	/**
-	 * Supported @Produces media types
-	 */
-	(function (MediaType) {
-	    MediaType[MediaType["JSON"] = 0] = "JSON";
-	})(exports.MediaType || (exports.MediaType = {}));
-	var MediaType = exports.MediaType;
-	function methodBuilder(method) {
-	    return function (url) {
-	        return function (target, propertyKey, descriptor) {
-	            var pPath = target[(propertyKey + "_Path_parameters")];
-	            var pQuery = target[(propertyKey + "_Query_parameters")];
-	            var pBody = target[(propertyKey + "_Body_parameters")];
-	            var pHeader = target[(propertyKey + "_Header_parameters")];
-	            descriptor.value = function () {
-	                var args = [];
-	                for (var _i = 0; _i < arguments.length; _i++) {
-	                    args[_i - 0] = arguments[_i];
-	                }
-	                // Body
-	                var body = null;
-	                if (pBody) {
-	                    body = JSON.stringify(args[pBody[0].parameterIndex]);
-	                }
-	                // Path
-	                var resUrl = url;
-	                if (pPath) {
-	                    for (var k in pPath) {
-	                        if (pPath.hasOwnProperty(k)) {
-	                            resUrl = resUrl.replace('{' + pPath[k].key + '}', args[pPath[k].parameterIndex]);
-	                        }
-	                    }
-	                }
-	                // Query
-	                var search = new http_1.URLSearchParams();
-	                if (pQuery) {
-	                    pQuery
-	                        .filter(function (p) { return args[p.parameterIndex]; }) // filter out optional parameters
-	                        .forEach(function (p) {
-	                        var key = p.key;
-	                        var value = args[p.parameterIndex];
-	                        // if the value is a instance of Object, we stringify it
-	                        if (value instanceof Object) {
-	                            value = JSON.stringify(value);
-	                        }
-	                        search.set(encodeURIComponent(key), encodeURIComponent(value));
-	                    });
-	                }
-	                // Headers
-	                // set class default headers
-	                var headers = new http_1.Headers(this.getDefaultHeaders());
-	                // set method specific headers
-	                for (var k in descriptor.headers) {
-	                    if (descriptor.headers.hasOwnProperty(k)) {
-	                        headers.append(k, descriptor.headers[k]);
-	                    }
-	                }
-	                // set parameter specific headers
-	                if (pHeader) {
-	                    for (var k in pHeader) {
-	                        if (pHeader.hasOwnProperty(k)) {
-	                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
-	                        }
-	                    }
-	                }
-	                // Request options
-	                var options = new http_1.RequestOptions({
-	                    method: method,
-	                    url: this.getBaseUrl() + resUrl,
-	                    headers: headers,
-	                    body: body,
-	                    search: search
-	                });
-	                var req = new http_1.Request(options);
-	                // intercept the request
-	                this.requestInterceptor(req);
-	                // make the request and store the observable for later transformation
-	                var observable = this.http.request(req);
-	                // intercept the response
-	                observable = this.responseInterceptor(observable);
-	                // transform the obserable in accordance to the @Produces decorator
-	                if (descriptor.producer) {
-	                    observable = observable.map(descriptor.producer);
-	                }
-	                return observable;
-	            };
-	            return descriptor;
-	        };
-	    };
-	}
-	/**
-	 * GET method
-	 * @param {string} url - resource url of the method
-	 */
-	exports.GET = methodBuilder(http_1.RequestMethod.Get);
-	/**
-	 * POST method
-	 * @param {string} url - resource url of the method
-	 */
-	exports.POST = methodBuilder(http_1.RequestMethod.Post);
-	/**
-	 * PUT method
-	 * @param {string} url - resource url of the method
-	 */
-	exports.PUT = methodBuilder(http_1.RequestMethod.Put);
-	/**
-	 * DELETE method
-	 * @param {string} url - resource url of the method
-	 */
-	exports.DELETE = methodBuilder(http_1.RequestMethod.Delete);
-	/**
-	 * HEAD method
-	 * @param {string} url - resource url of the method
-	 */
-	exports.HEAD = methodBuilder(http_1.RequestMethod.Head);
-
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
 	var Observable_1 = __webpack_require__(4);
-	var map_1 = __webpack_require__(22);
+	var map_1 = __webpack_require__(21);
 	Observable_1.Observable.prototype.map = map_1.map;
 	//# sourceMappingURL=map.js.map
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
