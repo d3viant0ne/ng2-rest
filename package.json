@@ -1,6 +1,6 @@
 {
-  "name": "ng2-rest",
-  "version": "0.0.1",
+  "name": "ng2-http-wrapper",
+  "version": "0.0.2",
   "description": "Angular2 HTTP wrapper for REST client services",
   "main": "./dist/umd/ng2-rest.js",
   "module": "./dist/esm/src/index.js",
