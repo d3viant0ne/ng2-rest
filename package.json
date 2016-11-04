@@ -1,6 +1,6 @@
 {
   "name": "ng2-http-wrapper",
-  "version": "0.0.2-alpha",
+  "version": "0.0.3-alpha",
   "description": "Angular2 HTTP wrapper for REST client services",
   "main": "./dist/umd/ng2-http-wrapper.js",
   "module": "./dist/esm/src/index.js",
@@ -17,7 +17,7 @@
     "commit": "git-cz",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "typedoc": "typedoc --options typedoc.json --out docs src/*.ts",
-    "gh-pages": "git checkout gh-pages && git merge master && npm run build:demo && npm run typedoc && git add . && git commit -m 'chore: build demo and docs' && git push && git checkout master",
+    "gh-pages": "git checkout gh-pages && git merge master && npm run build:demo && npm run typedoc && git add . && git commit -m 'chore(docs): build demo and docs' && git push && git checkout master",
     "prerelease": "npm test",
     "release": "standard-version --first-release && git push --follow-tags origin master && npm run build:clean && npm run build:demo && npm run build:dist && npm publish",
     "postrelease": "npm run build:clean && npm run gh-pages"
@@ -41,14 +41,14 @@
   },
   "homepage": "https://github.com/hboylan/ng2-rest#readme",
   "devDependencies": {
-    "@angular/common": "~2.1.2",
-    "@angular/compiler": "~2.1.2",
-    "@angular/compiler-cli": "~2.1.2",
-    "@angular/core": "~2.1.2",
-    "@angular/http": "^2.1.2",
-    "@angular/platform-browser": "~2.1.2",
-    "@angular/platform-browser-dynamic": "~2.1.2",
-    "@angular/platform-server": "~2.1.2",
+    "@angular/common": "~2.0.0",
+    "@angular/compiler": "~2.0.0",
+    "@angular/compiler-cli": "~0.6.3",
+    "@angular/core": "~2.0.0",
+    "@angular/http": "~2.0.0",
+    "@angular/platform-browser": "~2.0.0",
+    "@angular/platform-browser-dynamic": "~2.0.0",
+    "@angular/platform-server": "~2.0.1",
     "@types/chai": "~3.4.34",
     "@types/core-js": "~0.9.34",
     "@types/jasmine": "~2.5.37",
@@ -88,8 +88,8 @@
     "zone.js": "~0.6.26"
   },
   "peerDependencies": {
-    "@angular/core": "^2.1.2",
-    "@angular/http": "^2.1.2"
+    "@angular/core": "^2.0.0",
+    "@angular/http": "^2.0.0"
   },
   "files": [
     "dist"

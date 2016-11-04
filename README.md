@@ -35,7 +35,7 @@ Then use it in your app like so:
 // demo.module.ts
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {RESTModule} from '../src';
+import {RESTModule} from 'ng2-http-wrapper';
 import {Demo} from './demo.component';
 import {DemoService} from './demo.service';
 
@@ -52,7 +52,7 @@ export class DemoModule {}
 // demo.service.ts
 import {Injectable} from '@angular/core';
 import {Http, Request, Response} from '@angular/http';
-import {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces, MediaType} from '../src/rest.service';
+import {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces} from 'ng2-http-wrapper';
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()
@@ -96,6 +96,9 @@ export class Post {
 
 ```typescript
 // demo.component.ts
+import {Component, Input} from '@angular/core';
+import {DemoService, Post} from './demo.service';
+
 @Component(...)
 export class Demo {
   @Input() public demoPost: Post = new Post(1, 'Demo Title', 'Demo Body');

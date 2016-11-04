@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Http, Request, Response} from '@angular/http';
-import {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces, MediaType} from '../src/rest.module';
+import {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces, MediaType} from '../src/index';
 import {Observable} from 'rxjs/Observable';
 
 // https://github.com/typicode/jsonplaceholder#how-to
