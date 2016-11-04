@@ -39,7 +39,7 @@ describe('demo component', () => {
   // it('should get posts', () => {
   //   const fixture: ComponentFixture<Demo> = TestBed.createComponent(Demo);
   //   fixture.detectChanges();
-  //   expect(fixture.nativeElement.innerHTML.trim()).to.equal('Demo for ng2-rest module!');
+  //   expect(fixture.nativeElement.innerHTML.trim()).to.equal('Demo for ng2-http-wrapper module!');
   // });
 
 });

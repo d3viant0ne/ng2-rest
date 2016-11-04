@@ -1,7 +1,7 @@
-# ng2-rest
-[![Build Status](https://travis-ci.org/hboylan/ng2-rest.svg?branch=master)](https://travis-ci.org/hboylan/ng2-rest)
+# ng2-http-wrapper
+<!-- [![Build Status](https://travis-ci.org/hboylan/ng2-rest.svg?branch=master)](https://travis-ci.org/hboylan/ng2-rest) -->
 [![npm version](https://badge.fury.io/js/ng2-rest.svg)](http://badge.fury.io/js/ng2-rest)
-[![devDependency Status](https://david-dm.org/hboylan/ng2-rest/dev-status.svg)](https://david-dm.org/hboylan/ng2-rest#info=devDependencies)
+<!-- [![devDependency Status](https://david-dm.org/hboylan/ng2-rest/dev-status.svg)](https://david-dm.org/hboylan/ng2-rest#info=devDependencies) -->
 [![GitHub issues](https://img.shields.io/github/issues/hboylan/ng2-rest.svg)](https://github.com/hboylan/ng2-rest/issues)
 [![GitHub stars](https://img.shields.io/github/stars/hboylan/ng2-rest.svg)](https://github.com/hboylan/ng2-rest/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hboylan/ng2-rest/master/LICENSE)
@@ -25,36 +25,102 @@ Angular2 HTTP wrapper for REST client services
 
 Install through npm:
 ```
-npm install --save ng2-rest
+npm install --save ng2-http-wrapper
 ```
 
 Then use it in your app like so:
 
 ```typescript
-import {Component} from '@angular/core';
-import {HelloWorld} from 'ng2-rest';
+// demo.module.ts
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {RESTModule} from '../src';
+import {Demo} from './demo.component';
+import {DemoService} from './demo.service';
 
-@Component({
-  selector: 'demo-app',
-  directives: [HelloWorld],
-  template: '<hello-world></hello-world>'
+@NgModule({
+  declarations: [Demo],
+  imports: [BrowserModule, RESTModule],
+  bootstrap: [Demo],
+  providers: [DemoService]
 })
-export class DemoApp {}
+export class DemoModule {}
 ```
 
-You may also find it useful to view the [demo source](https://github.com/hboylan/ng2-rest/blob/master/demo/demo.ts).
+```typescript
+// demo.service.ts
+import {Injectable} from '@angular/core';
+import {Http, Request, Response} from '@angular/http';
+import {RESTClient, BaseUrl, DefaultHeaders, GET, POST, Body, Query, Produces, MediaType} from '../src/rest.service';
+import {Observable} from 'rxjs/Observable';
 
-### Usage without a module bundler
+@Injectable()
+@BaseUrl('http://jsonplaceholder.typicode.com')
+@DefaultHeaders({
+  'Accept': 'application/json',
+  'Content-Type': 'application/json'
+})
+export class DemoService extends RESTClient {
+
+  constructor(protected http: Http) {super(http)}
+
+  protected requestInterceptor(req: Request) {}
+
+  protected responseInterceptor(res: Observable<Response>): Observable<Response> {
+    return res
+  }
+
+  @POST('/posts')
+  public createPost(@Body post: Post): Observable<Response> {
+    return null;
+  }
+
+  @GET('/posts')
+  @Produces<Post[]>(res => <Post[]>res.json())
+  public getPosts(@Query('userId') userId?: number): Observable<Post[]> {
+    return null;
+  }
+}
+
+export class Post {
+
+  constructor(
+    public userId: number,
+    public title: string,
+    public body: string,
+    public id?: number
+  ) {}
+}
 ```
-<script src="node_modules/dist/umd/ng2-rest/ng2-rest.js"></script>
-<script>
-    // everything is exported RESTClient namespace
-</script>
+
+```typescript
+// demo.component.ts
+@Component(...)
+export class Demo {
+  @Input() public demoPost: Post = new Post(1, 'Demo Title', 'Demo Body');
+  @Input() public demoList: Post[] = [];
+
+  constructor(public demoService: DemoService) {
+    this.getPosts();
+  }
+
+  createPost() {
+    this.demoService.createPost(this.demoPost);
+  }
+
+  getPosts() {
+    this.demoService.getPosts().subscribe(res => {
+      this.demoList = res;
+    });
+  }
+}
 ```
 
 ## Documentation
 All documentation is auto-generated from the source via typedoc and can be viewed here:
 https://hboylan.github.io/ng2-rest/docs/
+
+---
 
 ## Development
 

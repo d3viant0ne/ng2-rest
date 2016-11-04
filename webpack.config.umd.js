@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/index.ts',
   output: {
     path: path.join(__dirname, 'dist', 'umd'),
-    filename: './ng2-rest.js',
+    filename: './ng2-http-wrapper.js',
     libraryTarget: 'umd',
     library: 'RESTClient'
   },
